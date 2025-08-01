@@ -54,12 +54,11 @@ ClickHouse
     ```bash
     git clone https://github.com/TheLastManSleeping/Kafka-ClickHouse-demo.git
     ```
-2.  Перейдите в папку проекта
-3.  Сделайте скрипт запуска исполняемым (только для Linux/macOS):
+2.  Сделайте скрипт запуска исполняемым (только для Linux/macOS):
     ```bash
     chmod +x start.sh
     ```
-4.  Запустите все сервисы:
+3.  Запустите все сервисы:
     ```bash
     ./start.sh
     ```
