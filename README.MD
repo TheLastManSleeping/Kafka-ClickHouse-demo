@@ -19,7 +19,6 @@
 .
 ├── docker-compose.yml      # Главный файл, описывающий все сервисы
 ├── start.sh                # Скрипт для автоматизированного запуска и генерации ID для Kafka
-Kafka
 ClickHouse
 │
 ├── clickhouse_init/
