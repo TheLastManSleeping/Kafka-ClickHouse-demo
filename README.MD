@@ -49,7 +49,7 @@
 
 1.  Склонируйте репозиторий:
     ```bash
-    git clone https://github.com/TheLastManSleeping/Kafka-ClickHouse-demo.git
+    git clone https://github.com/TheLastManSleeping/kafka-clickhouse-demo.git
     ```
 2.  Сделайте скрипт запуска исполняемым (только для Linux/macOS):
     ```bash
