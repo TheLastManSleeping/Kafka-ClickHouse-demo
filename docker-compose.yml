@@ -4,6 +4,10 @@ services:
     container_name: kafka
     ports:
       - "29092:9092"
+    volumes:
+      - kafka_data:/bitnami/kafka
+      - ./kafka-entrypoint.sh:/entrypoint-custom.sh
+    entrypoint: /entrypoint-custom.sh
     environment:
       # --- Настройки режима KRaft ---
       - KAFKA_CFG_NODE_ID=1
@@ -12,7 +16,6 @@ services:
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
-      - KAFKA_CLUSTER_ID=${CLUSTER_ID}
       - ALLOW_PLAINTEXT_LISTENER=yes
 
       # --- Пара примеров настроек для Kafka ---
@@ -73,3 +76,6 @@ services:
       # Как долго ждать, чтобы наполнить пачку.
       # Значение > 0 сильно улучшает производительность при неполной нагрузке.
       # - PRODUCER_LINGER_MS=5
+
+volumes:
+  kafka_data:

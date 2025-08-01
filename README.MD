@@ -18,7 +18,7 @@
 ```
 .
 ├── docker-compose.yml      # Главный файл, описывающий все сервисы
-├── start.sh                # Скрипт для автоматизированного запуска и генерации ID для Kafka
+├── kafka-entrypoint.sh     # Скрипт для автоматизированной генерации ID для Kafka
 ├── clickhouse_init/
 │   └──init.sql          # SQL-схема: таблицы и материализованные представления
 └── emitter/
@@ -26,7 +26,6 @@
     ├── emitter.py          # Python-скрипт, генерирующий и отправляющий события
     └── requirements.txt    # Зависимости для Python-скрипта
 ```
-
 
 ## Сервисы
 
@@ -51,15 +50,10 @@
     ```bash
     git clone https://github.com/TheLastManSleeping/kafka-clickhouse-demo.git
     ```
-2.  Сделайте скрипт запуска исполняемым (только для Linux/macOS):
+2.  Запустите все сервисы:
     ```bash
-    chmod +x start.sh
+    docker compose up -d --build
     ```
-3.  Запустите все сервисы:
-    ```bash
-    ./start.sh
-    ```
-    Скрипт автоматически сгенерирует `CLUSTER_ID` для Kafka (при первом запуске, сохранит его в файл `.cluster_id`) и поднимет все контейнеры.
 
 ## Остановка проекта
 
