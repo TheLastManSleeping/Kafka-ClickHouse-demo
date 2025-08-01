@@ -52,12 +52,9 @@ ClickHouse
 
 1.  Склонируйте репозиторий:
     ```bash
-    git clone [адрес_вашего_репозитория]
+    git clone https://github.com/TheLastManSleeping/Kafka-ClickHouse-demo.git
     ```
-2.  Перейдите в папку проекта:
-    ```bash
-    cd [название_папки_проекта]
-    ```
+2.  Перейдите в папку проекта
 3.  Сделайте скрипт запуска исполняемым (только для Linux/macOS):
     ```bash
     chmod +x start.sh
