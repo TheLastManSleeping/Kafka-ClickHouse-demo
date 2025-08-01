@@ -1,0 +1,75 @@
+services:
+  kafka:
+    image: 'bitnami/kafka:latest'
+    container_name: kafka
+    ports:
+      - "29092:9092"
+    environment:
+      # --- Настройки режима KRaft ---
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - KAFKA_CLUSTER_ID=${CLUSTER_ID}
+      - ALLOW_PLAINTEXT_LISTENER=yes
+
+      # --- Пара примеров настроек для Kafka ---
+      # КОЛИЧЕСТВО ПАРТИЦИЙ.
+      # Больше партиций позволяют обрабатывать сообщения более параллельно.
+      # - KAFKA_CFG_NUM_PARTITIONS=3
+
+      # ВРЕМЯ ХРАНЕНИЯ СООБЩЕНИЙ
+      # Как долго хранить сообщения в топике до их удаления.
+      # По умолчанию - 7 дней (604800000 миллисекунд). -1 означает "хранить вечно".
+      # Пример: 1 час (3600000)
+      # - KAFKA_CFG_LOG_RETENTION_MS=3600000
+
+    healthcheck:
+      test: ["CMD", "kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  clickhouse-server:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse-server
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    depends_on:
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./clickhouse_data:/var/lib/clickhouse/
+      - ./clickhouse_init:/docker-entrypoint-initdb.d/
+
+  event-emitter:
+    build: ./emitter
+    container_name: event-emitter
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      # Здесь вы можете задать любую желаемую скорость отправки сообщений в секунду
+      - MESSAGES_PER_SECOND=1000
+      
+      # --- НАСТРОЙКИ ПРОДЮСЕРА ---
+      # УРОВЕНЬ ПОДТВЕРЖДЕНИЯ
+      # Определяет надежность доставки.
+      # '0': не ждать ответа (максимальная скорость, но есть риск потери сообщений).
+      # '1': ждать ответа только от лидера партиции (хороший баланс, по умолчанию).
+      # 'all': ждать ответа от всех синхронизированных реплик (максимальная надежность).
+      # - PRODUCER_ACKS=1
+
+      # РАЗМЕР ПАЧКИ (в байтах)
+      # Продюсер группирует сообщения перед отправкой.
+      # Больший размер = выше пропускная способность, но выше и задержка.
+      # - PRODUCER_BATCH_SIZE=4096 # (это 4 КБ)
+
+      # ВРЕМЯ ОЖИДАНИЯ (в миллисекундах)
+      # Как долго ждать, чтобы наполнить пачку.
+      # Значение > 0 сильно улучшает производительность при неполной нагрузке.
+      # - PRODUCER_LINGER_MS=5
